@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleMain.css') }}">
+    <title>Netmax</title>
+</head>
+<body>
+    <div class="main-content-wrapper">
+        <div class="hero-wrapper">
+            <div class="hero-background-items">
+                <img id="most-recent-banner" src="{{ url_for('static', filename='content/filme/' ~ latest_movie[1].replace(' ', '_') ~ '/banner.webp') }}" alt="">
+                <div class="main-filter"></div>
+                <div class="top-filter"></div>
+                <div class="bottom-filter"></div>
+            </div>
+
+            <div class="hero-main-items">
+                <header>
+                    <div class="navigation-links">
+                        <a id="navigation-route" href="">Acasa</a>
+                        <a id="navigation-route" href="">Seriale</a>
+                        <a id="navigation-route" href="">Filme</a>
+                    </div>
+                    <a id="upload-dashboard-button" href="/dashboard"><img src="static/images/Upload.svg" alt=""></a>
+                </header>
+
+                <div class="content-details">
+                    <h1 id="most-recent-name">{{ latest_movie[1] }}</h1>
+                    <div class="content-specifications">
+                        <h3 id="content-specs">{{ latest_movie[4] }}</h3>
+                        <h3 id="content-specs">{{ latest_movie[3] }}</h3>
+                        <h3 id="content-specs">{{ latest_movie[2] }}</h3>
+                    </div>
+                    <h3 id="content-about">{{ latest_movie[5] }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-wrapper">
+            <p id="content-title">Recomandate</p>
+            <div class="content-containerr">
+                {% for movie in moviess %}
+                    <a href="{{ url_for('movie', moviePlaceholder=movie[0].replace(' ', '-')) }}">
+                        <img id="content-poster-image" src="{{ url_for('static', filename='content/filme/' ~ movie[0].replace(' ', '_') ~ '/poster.jpg') }}" alt="">
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

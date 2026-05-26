@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Upload</title>
+</head>
+<body> 
+    <div class="content_wrapper">
+        <div class="navigation-pannel">
+            <div class="main-locations content-direction">
+                <div class="nav-link-wrap">
+                    <img src="static/images/Home.svg" alt="">
+                    <a id="navigation-link" href="/">Acasa</a>
+                </div>
+                <div class="nav-link-wrap">
+                    <img src="static/images/Series.svg" alt="">
+                    <a id="navigation-link" href="">Seriale</a>
+                </div>
+                <div class="nav-link-wrap">
+                    <img src="static/images/Movies.svg" alt="">
+                    <a id="navigation-link" href="">Filme</a>
+                </div>  
+            </div>
+            <div class="secondary-locations content-direction">
+                <p>Content</p>
+                <button id="button-design" onclick="showSeriesList()">
+                    <img src="static/images/List.svg" alt="">
+                    Series List
+                </button>
+                <button id="button-design" onclick="showMoviesList()">
+                    <img src="static/images/List.svg" alt="">
+                    Movies List
+                </button>
+                <button id="button-design" onclick="showUploadContainer()">
+                    <img src="static/images/Upload.svg" alt="">
+                    Upload
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="seriaes-list-wrapper">
+        <div class="series-list list-container-design">
+            <h1 id="section-title">Series List</h1>
+        </div>
+
+        <div class="movies-list list-container-design">
+            <h1 id="section-title">Movies List</h1>
+
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Release Date</th>
+                    <th>Genre</th>
+                </tr>
+
+                {% for row in test %}
+                    
+                    <tr id="table-list">
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                        <td>{{ row[2] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="upload list-container-design">
+            <h1 id="section-title">Upload</h1>
+            <div class="upload-form-wrapper">
+                <form enctype="multipart/form-data" action="" method="post">
+                    <div class="horisontal-form">
+                        <input type="text" placeholder="Nume" name="name">
+                        <select name="type" id="" name="type">
+                            <option value="default">Tip</option>
+                            <option value="film">Film</option>
+                            <option value="serial">Serial</option>
+                        </select>
+                    </div>
+                    <div class="horisontal-form">
+                        <input type="text" placeholder="Gen" name="genre">
+                        <input type="number" placeholder="An aparitie" name="release_date">
+                    </div>
+                    <input id="description" type="text" placeholder="Descriere" name="description">
+                    <div class="horisontal-form">
+                        <div class="foder-button">
+                            <label id="folder-upload-label" for="folder-upload">Incarca Folder</label>
+                            <input webkitdirectory multiple name=file type="file" placeholder="Incarca Folder" id="folder-upload" />
+                        </div>
+                        <input id="submit" type="submit" value="Adauga">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
