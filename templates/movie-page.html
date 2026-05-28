@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='contentPage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='default.css') }}">
     <title>{{movie[1]}}</title>
 </head>
 <body>
@@ -44,6 +45,15 @@
                     <h3 id="content-about">{{ movie[5] }}</h3>
                 </div>
             </div>
-        </div>
+    </div>
+
+    <div class="similar-wrapper">
+        <h1 id="content-title">Poate îți plac și acestea</h1>
+        {% for mG in movieGenre %}
+            {% if mG != movie[1] %}
+                <img id="content-poster-image" src="{{url_for('static', filename='content/filme/' ~ mG[1].replace(' ', '_') ~ '/poster.jpg') }}" alt="">
+            {% endif %}
+        {% endfor %}
+    </div>
 </body>
 </html>

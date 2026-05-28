@@ -103,11 +103,17 @@ def movie(moviePlaceholder):
         cursor.execute('SELECT * FROM movies WHERE name = ?', (moviePlaceholder,))
 
         movie = cursor.fetchone()
+    
+    with init_db() as con:
+        cursor = con.cursor()
+        cursor.execute('SELECT * FROM movies WHERE genre = "Horror"')
+
+        movieGenre = cursor.fetchall()
 
     if movie is None:
         abort(404)
 
-    return render_template ('movie-page.html', movie=movie)
+    return render_template ('movie-page.html', movie=movie, movieGenre=movieGenre)
 
 @app.route('/movie/watch/<moviePlaceholder>')
 def watch(moviePlaceholder):

@@ -173,9 +173,3 @@ header {
     flex-direction: row;
     gap: 18px;
 }
-
-#content-poster-image {
-    width: 213px;
-    height: 302px;
-    object-fit: cover;
-}
