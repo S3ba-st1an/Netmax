@@ -10,6 +10,7 @@
     <div class="video-wrapper">
         <video id="movie" controls playsinline>
             <source src="{{ url_for('static', filename='content/filme/' + movieName[1].replace(' ', '_') + '/film.mp4') }}" type="video/mp4">
+            <track label="Romanian" kind="subtitles" srclang="en" src="{{ url_for('static', filename='content/filme/' + movieName[1].replace(' ', '_') + '/sub.vtt') }}" default />
         </video>
         <div class="top-controls">
             <a id="back-button" href="{{ url_for('movie', moviePlaceholder=movieName[1].replace(' ', '-')) }}">Back</a>

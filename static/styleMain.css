@@ -161,15 +161,3 @@ header {
     z-index: 2;
 }
 
-#content-title {
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    padding-bottom: 8px;
-}
-
-.content-containerr {
-    display: flex;
-    flex-direction: row;
-    gap: 18px;
-}

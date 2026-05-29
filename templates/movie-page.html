@@ -49,11 +49,13 @@
 
     <div class="similar-wrapper">
         <h1 id="content-title">Poate îți plac și acestea</h1>
-        {% for mG in movieGenre %}
-            {% if mG != movie[1] %}
-                <img id="content-poster-image" src="{{url_for('static', filename='content/filme/' ~ mG[1].replace(' ', '_') ~ '/poster.jpg') }}" alt="">
-            {% endif %}
-        {% endfor %}
+        <div class="content-containerr">
+            {% for mG in movieGenre if mG[1] != movie[1] %}
+                <a href="{{ url_for('movie', moviePlaceholder=mG[1].replace(' ', '-')) }}">
+                    <img id="content-poster-image" src="{{url_for('static', filename='content/filme/' ~ mG[1].replace(' ', '_') ~ '/poster.jpg') }}" alt="">
+                </a>
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>
