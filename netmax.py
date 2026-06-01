@@ -4,12 +4,14 @@ from werkzeug.utils import secure_filename
 import sqlite3
 
 UPLOAD_MOVIES = os.path.join('static', 'content', 'filme')
+UPLOAD_SERIES = os.path.join('static', 'content', 'seriale')
 
 def init_db():
     return sqlite3.connect('movie_list.db')
 
 app = Flask(__name__)
 app.config['UPLOAD_MOVIES'] = UPLOAD_MOVIES
+app.config['UPLOAD_SERIES'] = UPLOAD_SERIES
 
 @app.route('/dashboard', methods =["GET", "POST"])
 def uploadfile():
@@ -77,12 +79,50 @@ def uploadfile():
                 cursor.execute("INSERT INTO series (name, type, genre, year, description) VALUES(?, ?, ?, ?, ?)",
                                 (inpName, inpType, inpGenre, inpReleaseDate, inpDescription))
                 con.commit()
+
+                files = request.files.getlist('file')
+
+                if not files:
+                    flash('No selected folder')
+                    return redirect(request.url)
+
+                folder_name = secure_filename(inpName)
+                upload_folder = os.path.join(
+                    app.config['UPLOAD_SERIES'],
+                    folder_name
+                )
+                os.makedirs(upload_folder, exist_ok=True)
+                for file in files:
+                    if file.filename == '':
+                        continue
+
+                    relative_path = file.filename.replace('\\', '/')
+                    path_parts = relative_path.split('/')
+
+                    if len(path_parts) > 1:
+                        path_parts = path_parts[1:]
+
+                    safe_parts = [secure_filename(part) for part in path_parts]
+
+                    save_path = os.path.join(upload_folder, *safe_parts)
+
+                    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+                    file.save(save_path)
+
+                    print(file.filename)
+
     with init_db() as con:
         cursor = con.cursor()
         cursor.execute("SELECT name, type, genre FROM movies")
         test = cursor.fetchall()
+    
+    with init_db() as con:
+        cursor = con.cursor()
+        cursor.execute("SELECT name, type, genre FROM series")
+        seriesData = cursor.fetchall()
 
-    return render_template ("upload.html", test=test)
+    return render_template ("upload.html", test=test, seriesData=seriesData)
 
 @app.route('/')
 def main():
