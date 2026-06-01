@@ -44,6 +44,26 @@
     <div class="seriaes-list-wrapper">
         <div class="series-list list-container-design">
             <h1 id="section-title">Series List</h1>
+
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Release Date</th>
+                    <th>Genre</th>
+                    <th>Season Number</th>
+                    <th>Episodes</th>
+                </tr>
+
+                {% for row in seriesData %}
+                    <tr id="table-list">
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                        <td>{{ row[2] }}</td>
+                        <td>8</td>
+                        <td>150</td>
+                    </tr>
+                {% endfor %}
+            </table>
         </div>
 
         <div class="movies-list list-container-design">
