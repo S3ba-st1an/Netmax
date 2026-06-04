@@ -133,7 +133,12 @@ def main():
 
         cursor.execute("SELECT * FROM movies ORDER BY id DESC LIMIT 1")
         latest_movie = cursor.fetchone()
-    return render_template ("index.html", moviess=moviess, latest_movie=latest_movie)
+
+    with init_db() as con:
+        cursor = con.cursor()
+        cursor.execute("SELECT name FROM series")
+        series = cursor.fetchall()
+    return render_template ("index.html", moviess=moviess, latest_movie=latest_movie, series=series)
 
 @app.route('/movie/<moviePlaceholder>/')
 def movie(moviePlaceholder):
@@ -164,5 +169,25 @@ def watch(moviePlaceholder):
 
         movieName = cursor.fetchone()
     return render_template ('movie-watch.html', movieName=movieName)
+
+@app.route('/series/<seriesPlaceholder>/')
+def series(seriesPlaceholder):
+    seriesPlaceholder = seriesPlaceholder.replace('-', ' ')
+    with init_db() as con:
+        cursor = con.cursor()
+        cursor.execute('SELECT name FROM series WHERE name = ?', (seriesPlaceholder,))
+
+        series = cursor.fetchone()
+    
+    with init_db() as con:
+        cursor = con.cursor()
+        cursor.execute('SELECT * FROM series WHERE genre = "Horror"')
+
+        seriesGenre = cursor.fetchall()
+
+    if series is None:
+        abort(404)
+
+    return render_template ('series-page.html', series=series, seriesGenre=seriesGenre)
 
 app.run (port=5001, host="0.0.0.0", debug=True)
