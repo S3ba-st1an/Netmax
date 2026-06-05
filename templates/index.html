@@ -52,7 +52,7 @@
             <p id="content-title">Seriale</p>
             <div class="content-containerr">
                 {% for serie in series %}
-                    <a href="{{ url_for('series', seriesPlaceholder=series[0][0].replace(' ', '-')) }}">
+                    <a href="{{ url_for('series', seriesPlaceholder=serie[0].replace(' ', '-')) }}">
                         <img id="content-poster-image" src="{{ url_for('static', filename='content/seriale/' ~ serie[0].replace(' ', '_') ~ '/poster.jpg') }}" alt="">
                     </a>
                 {% endfor %}

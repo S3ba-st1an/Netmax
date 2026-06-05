@@ -175,7 +175,7 @@ def series(seriesPlaceholder):
     seriesPlaceholder = seriesPlaceholder.replace('-', ' ')
     with init_db() as con:
         cursor = con.cursor()
-        cursor.execute('SELECT name FROM series WHERE name = ?', (seriesPlaceholder,))
+        cursor.execute('SELECT * FROM series WHERE name = ?', (seriesPlaceholder,))
 
         series = cursor.fetchone()
     
