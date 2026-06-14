@@ -1,4 +1,6 @@
 import os
+import random
+import cv2
 from flask import Flask, flash, render_template, request, redirect, url_for, abort
 from werkzeug.utils import secure_filename
 import sqlite3
@@ -6,8 +8,67 @@ import sqlite3
 UPLOAD_MOVIES = os.path.join('static', 'content', 'filme')
 UPLOAD_SERIES = os.path.join('static', 'content', 'seriale')
 
+def get_series_structure():
+    base = app.config['UPLOAD_SERIES']
+    data = {}
+
+    for series in os.listdir(base):
+        series_path = os.path.join(base, series)
+        if not os.path.isdir(series_path):
+            continue
+
+        seasons_data = {}
+
+        for season in os.listdir(series_path):
+            season_path = os.path.join(series_path, season)
+
+            thumbnails_path = os.path.join(season_path, "thumbnails")
+
+            if not os.path.isdir(season_path) or season == "thumbnails":
+                continue
+
+            images = []
+
+            if os.path.exists(thumbnails_path):
+                for img in os.listdir(thumbnails_path):
+                    if img.lower().endswith(('.jpg', '.png', '.jpeg', '.webp')):
+                        images.append(img)
+
+            seasons_data[season] = images
+
+        data[series] = seasons_data
+
+    return data
+
 def init_db():
     return sqlite3.connect('movie_list.db')
+
+def save_random_scene(video_path, output_image):
+    cap = cv2.VideoCapture(video_path)
+
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    if fps <= 0 or frame_count <= 0:
+        cap.release()
+        return False
+
+    duration = frame_count / fps
+
+    # Pick a random point between 20% and 80% of the video
+    random_second = random.uniform(duration * 0.2, duration * 0.8)
+
+    # Jump to that timestamp
+    cap.set(cv2.CAP_PROP_POS_MSEC, random_second * 1000)
+
+    success, frame = cap.read()
+
+    if success:
+        cv2.imwrite(output_image, frame)
+
+    cap.release()
+    return success
+
 
 app = Flask(__name__)
 app.config['UPLOAD_MOVIES'] = UPLOAD_MOVIES
@@ -104,13 +165,33 @@ def uploadfile():
 
                     safe_parts = [secure_filename(part) for part in path_parts]
 
+                    # ✅ 1. CREATE SAVE PATH FIRST
                     save_path = os.path.join(upload_folder, *safe_parts)
 
                     os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
+                    # ✅ 2. SAVE FILE
                     file.save(save_path)
 
-                    print(file.filename)
+                    ext = os.path.splitext(save_path)[1].lower()
+
+                    if ext in ['.mp4', '.mkv', '.avi', '.mov']:
+
+                        # ✅ 3. NOW YOU CAN USE save_path SAFELY
+                        season_folder = os.path.dirname(save_path)
+                        season = os.path.basename(season_folder)
+
+                        screenshots_folder = os.path.join(season_folder, "thumbnails")
+                        os.makedirs(screenshots_folder, exist_ok=True)
+
+                        episode_name = os.path.splitext(os.path.basename(save_path))[0]
+
+                        screenshot_path = os.path.join(
+                            screenshots_folder,
+                            f"{episode_name}.jpg"
+                        )
+
+                        save_random_scene(save_path, screenshot_path)
 
     with init_db() as con:
         cursor = con.cursor()
@@ -121,7 +202,6 @@ def uploadfile():
         cursor = con.cursor()
         cursor.execute("SELECT name, type, genre FROM series")
         seriesData = cursor.fetchall()
-
     return render_template ("upload.html", test=test, seriesData=seriesData)
 
 @app.route('/')
@@ -138,6 +218,7 @@ def main():
         cursor = con.cursor()
         cursor.execute("SELECT name FROM series")
         series = cursor.fetchall()
+
     return render_template ("index.html", moviess=moviess, latest_movie=latest_movie, series=series)
 
 @app.route('/movie/<moviePlaceholder>/')
@@ -152,6 +233,7 @@ def movie(moviePlaceholder):
     with init_db() as con:
         cursor = con.cursor()
         cursor.execute('SELECT * FROM movies WHERE genre = "Horror"')
+
 
         movieGenre = cursor.fetchall()
 
@@ -187,7 +269,11 @@ def series(seriesPlaceholder):
 
     if series is None:
         abort(404)
+    series_structure = get_series_structure()
+    return render_template ('series-page.html', series=series, seriesGenre=seriesGenre, series_structure=series_structure)
 
-    return render_template ('series-page.html', series=series, seriesGenre=seriesGenre)
+@app.route('/series/watch/<seriesPlaceholder>/')
+def seriesWhatch(seriesPlaceholder):
+    seriesPlaceholder = seriesPlaceholder.replace('-', ' ')
 
 app.run (port=5001, host="0.0.0.0", debug=True)
