@@ -226,3 +226,19 @@ source {
     height: 188px;
     object-fit: cover;
 }
+
+#season-drop {
+    background-color: #222;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 300;
+    padding: 16px 24px;
+}
+
+#episode-title {
+    font-size: 14px;
+    color: #fff;
+    font-weight: 400;
+    padding-top: 8px;
+}
