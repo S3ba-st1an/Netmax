@@ -3,9 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='contentPage.css') }}">
+    <title>{{ seriesName[1] }}</title>
 </head>
 <body>
+    <div class="video-wrapper">
+        <video id="movie" controls playsinline>
+            <source src="{{ url_for('static', filename='content/seriale/' ~ seriesName[1] ~ '/' ~ season_name ~ '/' ~ episode_name ~ '.mp4') }}" type="video/mp4">
+        </video>
+        <div class="top-controls">
+            <a id="back-button" href="{{ url_for('series', seriesPlaceholder=seriesName[1].replace(' ', '-')) }}">Back</a>
+        </div>
+    </div>
+
     
+
+<script>
+    window.addEventListener('load', async () => {
+        const video = document.getElementById('movie');
+
+        if (localStorage.getItem('userInteracted')) {
+            video.muted = false;
+            video.volume = 1;
+
+            try {
+                await video.play();
+            } catch(err) {
+                console.log(err);
+            }
+        }
+    });
+</script>
 </body>
 </html>

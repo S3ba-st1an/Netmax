@@ -48,14 +48,21 @@
     </div>
 
     <div class="episodes-wrapper">
+        <select id="season-drop">
+            {% for series_name, seasons in series_structure.items() %}
+                {% for season_name, images in seasons.items() %}
+                    <option value="season">{{season_name}}</option>
+                {% endfor %}
+            {% endfor %}
+        </select>
         <h3 id="content-title">Episoade</h3>
         <div class="episodes-container">
             {% for series_name, seasons in series_structure.items() %}
                 {% for season_name, images in seasons.items() %}
                     {% for image in images %}
-                        <a href="">
+                        <a href="{{ url_for('seriesWhatch', series_name=series_name, season_name=season_name, episode_name=image.replace('.jpg', '')) }}">
                             <img id="episode-image" loading="lazy" src="{{ url_for('static', filename='content/seriale/' ~ series_name ~ '/' ~ season_name ~ '/thumbnails/' ~ image) }}">
-                            
+                            <h3 id="episode-title">{{image.replace('.jpg', '')}}</h3>
                         </a>
                     {% endfor %}
                 {% endfor %}
